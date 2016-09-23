@@ -1,12 +1,17 @@
+// Type definitions for Web Bluetooth
+// Project: https://webbluetoothcg.github.io/web-bluetooth/
+// Definitions by: Uri Shaked <https://github.com/urish/>
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+
 type BluetoothServiceUUID = number | string;
 type BluetoothCharacteristicUUID = number | string;
-type BluetoothDescriptorUUID  = number | string;
+type BluetoothDescriptorUUID = number | string;
 
 interface BluetoothRequestDeviceFilter {
   services?: BluetoothServiceUUID[];
-  name?:string;
-  namePrefix?:string;
-  manufacturerId?:number;
+  name?: string;
+  namePrefix?: string;
+  manufacturerId?: number;
   serviceDataUUID?: BluetoothServiceUUID;
 }
 
@@ -14,7 +19,7 @@ interface RequestDeviceOptions {
   filters: BluetoothRequestDeviceFilter[];
   optionalServices?: number[];
   acceptAllDevices?: boolean;
-};
+}
 
 interface BluetoothRemoteGATTDescriptor {
   readonly characteristic: BluetoothRemoteGATTCharacteristic;
@@ -22,7 +27,7 @@ interface BluetoothRemoteGATTDescriptor {
   readonly value?: DataView;
   readValue(): Promise<DataView>;
   writeValue(value: BufferSource): Promise<void>;
-};
+}
 
 interface BluetoothCharacteristicProperties {
   readonly broadcast: boolean;
@@ -34,39 +39,41 @@ interface BluetoothCharacteristicProperties {
   readonly authenticatedSignedWrites: boolean;
   readonly reliableWrite: boolean;
   readonly writableAuxiliaries: boolean;
-};
+}
 
-interface BluetoothRemoteGATTCharacteristic {
+interface BluetoothRemoteGATTCharacteristic extends EventTarget {
   readonly service?: BluetoothRemoteGATTService;
   readonly uuid: string;
   readonly properties: BluetoothCharacteristicProperties;
-  readonly value?:DataView;
+  readonly value?: DataView;
   getDescriptor(descriptor: BluetoothDescriptorUUID): Promise<BluetoothRemoteGATTDescriptor>;
-  getDescriptors(descriptor?:BluetoothDescriptorUUID):Promise<BluetoothRemoteGATTDescriptor[]>;
-  readValue():Promise<DataView>;
-  writeValue(value:BufferSource):Promise<void>;
-  startNotifications():Promise<BluetoothRemoteGATTCharacteristic>;
-  stopNotifications():Promise<BluetoothRemoteGATTCharacteristic>;
-};
+  getDescriptors(descriptor?: BluetoothDescriptorUUID): Promise<BluetoothRemoteGATTDescriptor[]>;
+  readValue(): Promise<DataView>;
+  writeValue(value: BufferSource): Promise<void>;
+  startNotifications(): Promise<BluetoothRemoteGATTCharacteristic>;
+  stopNotifications(): Promise<BluetoothRemoteGATTCharacteristic>;
+  addEventListener(type: "characteristicvaluechanged", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
+}
 
 interface BluetoothRemoteGATTService {
   readonly device: BluetoothDevice;
   readonly uuid: string;
   readonly isPrimary: boolean;
-  getCharacteristic( characteristic: BluetoothCharacteristicUUID):  Promise<BluetoothRemoteGATTCharacteristic>;
-  getCharacteristics(characteristic?: BluetoothCharacteristicUUID):  Promise<BluetoothRemoteGATTCharacteristic[]>;
+  getCharacteristic(characteristic: BluetoothCharacteristicUUID): Promise<BluetoothRemoteGATTCharacteristic>;
+  getCharacteristics(characteristic?: BluetoothCharacteristicUUID): Promise<BluetoothRemoteGATTCharacteristic[]>;
   getIncludedService(service: BluetoothServiceUUID): Promise<BluetoothRemoteGATTService>;
-  getIncludedServices( service?:BluetoothServiceUUID): Promise<BluetoothRemoteGATTService[]>;
-};
+  getIncludedServices(service?: BluetoothServiceUUID): Promise<BluetoothRemoteGATTService[]>;
+}
 
 interface BluetoothRemoteGATTServer {
   readonly  device: BluetoothDevice;
-  readonly connected:  boolean ;
+  readonly connected: boolean;
   connect(): Promise<BluetoothRemoteGATTServer>;
-  disconnect();
+  disconnect(): void;
   getPrimaryService(service: BluetoothServiceUUID): Promise<BluetoothRemoteGATTService>;
   getPrimaryServices(service?: BluetoothServiceUUID): Promise<BluetoothRemoteGATTService[]>;
-};
+}
 
 interface BluetoothDevice {
   readonly id: string;
@@ -75,17 +82,17 @@ interface BluetoothDevice {
   readonly uuids?: string[];
 
   watchAdvertisements(): Promise<void>;
-  unwatchAdvertisements();
+  unwatchAdvertisements(): void;
   readonly watchingAdvertisements: boolean;
-};
+}
 
 interface Bluetooth {
   getAvailability(): Promise<boolean>;
   onavailabilitychanged: Function; // EventHandler
   readonly referringDevice?: BluetoothDevice;
   requestDevice(options?: RequestDeviceOptions): Promise<BluetoothDevice>;
-};
+}
 
 interface Navigator {
-  bluetooth : Bluetooth;
+  bluetooth: Bluetooth;
 }
