@@ -41,7 +41,11 @@ interface BluetoothCharacteristicProperties {
   readonly writableAuxiliaries: boolean;
 }
 
-interface BluetoothRemoteGATTCharacteristic extends EventTarget {
+interface CharacteristicEventHandlers {
+  oncharacteristicvaluechanged: (this: this, ev: Event) => any;
+}
+
+interface BluetoothRemoteGATTCharacteristic extends EventTarget, CharacteristicEventHandlers {
   readonly service?: BluetoothRemoteGATTService;
   readonly uuid: string;
   readonly properties: BluetoothCharacteristicProperties;
@@ -56,7 +60,13 @@ interface BluetoothRemoteGATTCharacteristic extends EventTarget {
   addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
 }
 
-interface BluetoothRemoteGATTService {
+interface ServiceEventHandlers {
+  onserviceadded: (this: this, ev: Event) => any;
+  onservicechanged: (this: this, ev: Event) => any;
+  onserviceremoved: (this: this, ev: Event) => any;
+}
+
+interface BluetoothRemoteGATTService extends EventTarget, CharacteristicEventHandlers, ServiceEventHandlers {
   readonly device: BluetoothDevice;
   readonly uuid: string;
   readonly isPrimary: boolean;
@@ -64,10 +74,14 @@ interface BluetoothRemoteGATTService {
   getCharacteristics(characteristic?: BluetoothCharacteristicUUID): Promise<BluetoothRemoteGATTCharacteristic[]>;
   getIncludedService(service: BluetoothServiceUUID): Promise<BluetoothRemoteGATTService>;
   getIncludedServices(service?: BluetoothServiceUUID): Promise<BluetoothRemoteGATTService[]>;
+  addEventListener(type: "serviceadded", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+  addEventListener(type: "servicechanged", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+  addEventListener(type: "serviceremoved", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
 }
 
-interface BluetoothRemoteGATTServer {
-  readonly  device: BluetoothDevice;
+interface BluetoothRemoteGATTServer extends EventTarget {
+  readonly device: BluetoothDevice;
   readonly connected: boolean;
   connect(): Promise<BluetoothRemoteGATTServer>;
   disconnect(): void;
@@ -75,7 +89,11 @@ interface BluetoothRemoteGATTServer {
   getPrimaryServices(service?: BluetoothServiceUUID): Promise<BluetoothRemoteGATTService[]>;
 }
 
-interface BluetoothDevice {
+interface BluetoothDeviceEventHandlers {
+  ongattserverdisconnected: (this: this, ev: Event) => any;
+}
+
+interface BluetoothDevice extends EventTarget, BluetoothDeviceEventHandlers, CharacteristicEventHandlers, ServiceEventHandlers {
   readonly id: string;
   readonly name?: string;
   readonly gatt?: BluetoothRemoteGATTServer;
@@ -84,13 +102,20 @@ interface BluetoothDevice {
   watchAdvertisements(): Promise<void>;
   unwatchAdvertisements(): void;
   readonly watchingAdvertisements: boolean;
+
+  addEventListener(type: "gattserverdisconnected", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+  addEventListener(type: "advertisementreceived", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
 }
 
-interface Bluetooth {
+interface Bluetooth extends EventTarget, BluetoothDeviceEventHandlers, CharacteristicEventHandlers, ServiceEventHandlers {
   getAvailability(): Promise<boolean>;
-  onavailabilitychanged: Function; // EventHandler
+  onavailabilitychanged: (this: this, ev: Event) => any;
   readonly referringDevice?: BluetoothDevice;
   requestDevice(options?: RequestDeviceOptions): Promise<BluetoothDevice>;
+
+  addEventListener(type: "availabilitychanged", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
 }
 
 interface Navigator {
