@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "noImplicitAny": true
+  },
+  "files": [
+    "web-bluetooth.d.ts",
+    "web-bluetooth-tests.ts"
+  ]
+}

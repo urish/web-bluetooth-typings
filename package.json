@@ -1,0 +1,33 @@
+{
+  "name": "web-bluetooth-typings",
+  "version": "1.0.0",
+  "description": "Typings for Web Bluetooth",
+  "main": "library-tests.js",
+  "devDependencies": {
+    "typescript": "2.0.3"
+  },
+  "scripts": {
+    "test": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/urish/web-bluetooth-typings.git"
+  },
+  "keywords": [
+    "Web",
+    "Bluetooth",
+    "Bluetooth",
+    "Low",
+    "Energy",
+    "BLE"
+  ],
+  "files": [
+    "web-bluetooth.d.ts"
+  ],
+  "author": "Uri Shaked",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/urish/web-bluetooth-typings/issues"
+  },
+  "homepage": "https://github.com/urish/web-bluetooth-typings#readme"
+}
